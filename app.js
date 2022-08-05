@@ -8,19 +8,19 @@ let shopmodal_btn = document.getElementById('shopmodal_btn')
 
 let GetAllProducts = () =>{
     const data = ReadLsData('Product')
+    let list = ""
 
     // If Ls data not exist
 
-    if (!data) {
-       productList.innerHTML =` <tr>
+    if (!data || data.length == 0) {
+       list =` <tr>
         <td colspan = "7" class= "text-center"> Products Not Found! </td>
        </tr>` 
     }
 
     //if exist
 
-    if(data){
-        let list = ""
+    if(data && data.length >0){
         let total = 0
         // loop for showing data
         data.map((item, index) =>{
@@ -35,9 +35,9 @@ let GetAllProducts = () =>{
                   <td class="text-center">${item.quantity}</td>
                   <td>${item.price * item.quantity} BDT</td>
                   <td>
-                    <a class="btn btn-info btn-sm shadow-sm" product_index = '${index}' data-bs-toggle = "modal" href="#shop_single_modal"><i class="fas fa-eye"></i></a>
-                    <a class="btn btn-warning btn-sm shadow-sm" product_index = '${index}' data-bs-toggle = "modal" href="#shop_edit_modal"><i class="fas fa-edit"></i></a>
-                    <a class="btn btn-danger btn-sm shadow-sm" href=""><i class="fas fa-trash"></i></a>
+                    <a class="btn btn-info btn-sm shadow-sm single_edit" product_index = '${index}' data-bs-toggle = "modal" href="#shop_single_modal"><i class="fas fa-eye"></i></a>
+                    <a class="btn btn-warning btn-sm shadow-sm single_view" product_index = '${index}' data-bs-toggle = "modal" href="#shop_edit_modal"><i class="fas fa-edit"></i></a>
+                    <a class="btn btn-danger btn-sm shadow-sm single_delete" href=""><i class="fas fa-trash"></i></a>
                   </td>
                 </tr>`
         });
@@ -46,10 +46,10 @@ let GetAllProducts = () =>{
             <td colspan = "6" class= "text-end">Total = ${total} BDT</td>
             <td></td>
         </tr>`
-        productList.innerHTML = list;
+       
     }
 
-
+    productList.innerHTML = list;
 
 }
 
@@ -96,9 +96,10 @@ productList.onclick = (e) => {
     e.preventDefault()
 
 
-    if (e.target.classList.contains('fa-eye')) {
+    // view product
+    if (e.target.classList.contains('single_edit')) {
         //get data & index
-    let index = e.target.parentElement.getAttribute("product_index")
+    let index = e.target.getAttribute("product_index")
     let data = ReadLsData("Product")
     
     
@@ -113,10 +114,13 @@ productList.onclick = (e) => {
     `
 
 
-    } else if(e.target.classList.contains('fa-edit')) {
+    } 
+    
+    //Edit product
+    if(e.target.classList.contains('single_view')) {
         
     //get data & index
-    let index = e.target.parentElement.getAttribute("product_index")
+    let index = e.target.getAttribute("product_index")
     let data = ReadLsData("Product")
     
     
@@ -153,12 +157,36 @@ productList.onclick = (e) => {
     <input type="submit" class="btn btn-success shadow-sm w-75 fs-5" value="Update Product">
   </div>
     `
+    } 
+
+    //delete product
+    if(e.target.classList.contains('single_delete')){
+       
+        let verification = confirm("Are you sure?")
+
+        if (verification) {
+             //get index for delete
+        let index = e.target.getAttribute('product_index')
+        let data = ReadLsData('Product')
+
+        //remove data
+        data.splice(index,1)
+        //update data
+        updateLsData('Product', data)
+        GetAllProducts()
+        } else {
+            alert('Data safe!')
+        }
     }
+
+        
+        
+    
     
     
 }
 
-// Update Product
+
 
 
 

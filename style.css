@@ -16,3 +16,7 @@
     border: 10px solid #fff;
     
 }
+
+i {
+    pointer-events: none;
+}
